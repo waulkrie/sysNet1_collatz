@@ -37,15 +37,12 @@ void Collatz::execute()
 }
 
 void *Collatz::worker()
-{   this->mtx.lock();
-    cout << "Thread # " << this->COUNTER << " started." << endl;
-    this->COUNTER++;
-    this->mtx.unlock();
 
     //collatz algorithm
     this->mtx.lock();
     uint64_t n = this->COUNTER++;
     this->mtx.unlock();
+    cout << "Thread # " << n << " started." << endl;
     uint64_t n_copy = n;
     uint32_t stopping_time = 0;
     while(n != 1)
