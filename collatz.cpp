@@ -37,7 +37,7 @@ void Collatz::execute()
 }
 
 void *Collatz::worker()
-
+{
     //collatz algorithm
     this->mtx.lock();
     uint64_t n = this->COUNTER++;
