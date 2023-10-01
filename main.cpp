@@ -11,8 +11,8 @@ int main(int argc, char* argv[])
         return 1;
     }
     uint64_t n = atoi(argv[1]);
-    int8_t worker_threads = atoi(argv[2]);
-    cout << "args.. " << n << "threads " << worker_threads << endl;
+    uint32_t worker_threads = atoi(argv[2]);
+    cout << "n :" << n << " threads :" << worker_threads << endl;
     
     Collatz collatz(n, worker_threads);
     collatz.execute();
