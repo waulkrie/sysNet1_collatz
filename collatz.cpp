@@ -4,7 +4,7 @@ Collatz::Collatz(uint64_t n, int8_t n_threads)
 {
     this->n = n;
     this->n_threads = n_threads;
-    this->stopping_times = new vector<int32_t>[n];
+    this->stopping_times = new vector<int32_t>[n+1];
 }
 
 Collatz::~Collatz() 
@@ -26,11 +26,11 @@ void Collatz::execute()
     {
         thread.join();
     }
-    cout << this->COUNTER << " Threads finished." << endl;
-    //this->calculate_runtime();
-    for(size_t i = 0; i < this->n ; i++)
+    cout << this->n_threads << " Threads finished." << endl;
+    this->calculate_runtime();
+    for(size_t i = 0; i <= this->n ; i++)
     {
-        cout <<i << ", frequency_of_stopping_time(" << stopping_times[i].size() << ')' << endl;
+         cout <<i << ", frequency_of_stopping_time(" << stopping_times[i].size() << ')' << endl;
     }
 }
 
@@ -43,7 +43,7 @@ void *Collatz::worker()
         this->mtx.unlock();
         uint64_t c_copy = COUNTER;
         uint32_t stopping_time = 0;
-         cout << "c_copy = " << c_copy << endl;
+        // cout << "c_copy = " << c_copy << endl;
         while(c_copy != 1)
         {
            //cout << "in inner while loop" << endl;
@@ -57,11 +57,11 @@ void *Collatz::worker()
             }
             stopping_time++;
         }
-        cout << "stopping time = " << stopping_time << endl;
+        //cout << "stopping time = " << stopping_time << endl;
         // save stopping time
         this->mtx.lock();
         this->stopping_times[stopping_time].push_back(stopping_time); // mutex me??
-        cout << "Added stopping time " << stopping_time << endl; 
+        //cout << "Added stopping time " << stopping_time << endl; 
         this->mtx.unlock();
     }
     
