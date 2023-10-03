@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     }
     uint64_t n = atoi(argv[1]);
     int8_t worker_threads = atoi(argv[2]);
-    cout << "args.. " << n << "threads " << worker_threads << endl;
+    cout << "args.. " << n << " threads " << worker_threads << endl;
     
     Collatz collatz(n, worker_threads);
     collatz.execute();

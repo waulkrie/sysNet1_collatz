@@ -19,6 +19,7 @@ void Collatz::execute()
     for(int i = 0; i < this->n_threads; i++)
     {
         this->thread_vector.push_back(thread(&Collatz::worker, this));
+        cout << "Thread # " << i+1 << " started." << endl;
     }
     cout << "Waiting for threads to finish..." << endl;
     for(auto& thread : this->thread_vector)
@@ -26,39 +27,44 @@ void Collatz::execute()
         thread.join();
     }
     cout << this->COUNTER << " Threads finished." << endl;
-    this->calculate_runtime();
+    //this->calculate_runtime();
     for(size_t i = 0; i < this->n ; i++)
     {
-        cout << i ;
-        for(size_t j = 0; j < this->stopping_times[i].size(); i++)
-            cout << " " << this->stopping_times[i].at(j);
-        cout << endl;
+        cout <<i << ", frequency_of_stopping_time(" << stopping_times[i].size() << ')' << endl;
     }
 }
 
 void *Collatz::worker()
 {
     //collatz algorithm
-    this->mtx.lock();
-    uint64_t n = this->COUNTER++;
-    this->mtx.unlock();
-    cout << "Thread # " << n << " started." << endl;
-    uint64_t n_copy = n;
-    uint32_t stopping_time = 0;
-    while(n != 1)
-    {
-        if(n % 2 == 0)
+    while(COUNTER<n){
+        this->mtx.lock();
+        this->COUNTER++;
+        this->mtx.unlock();
+        uint64_t c_copy = COUNTER;
+        uint32_t stopping_time = 0;
+         cout << "c_copy = " << c_copy << endl;
+        while(c_copy != 1)
         {
-            n = n / 2;
+           //cout << "in inner while loop" << endl;
+            if(c_copy % 2 == 0)
+            {
+                c_copy /= 2;
+            }
+            else
+            {
+                c_copy = 3 * c_copy + 1;
+            }
+            stopping_time++;
         }
-        else
-        {
-            n = 3 * n + 1;
-        }
-        stopping_time++;
+        cout << "stopping time = " << stopping_time << endl;
+        // save stopping time
+        this->mtx.lock();
+        this->stopping_times[stopping_time].push_back(stopping_time); // mutex me??
+        cout << "Added stopping time " << stopping_time << endl; 
+        this->mtx.unlock();
     }
-    // save stopping time
-    this->stopping_times[n_copy].push_back(stopping_time); // mutex me??
+    
     return nullptr;
 }
 
