@@ -10,7 +10,7 @@ Collatz::Collatz(uint64_t n, uint16_t n_threads, bool islock)
     this->n = n;
     this->n_threads = n_threads;
     this->stopping_times = vector<int32_t>(n+1000, 0);
-    this->COUNTER = 0;
+    this->COUNTER = 1;
     this->islock = islock;
 }
 
@@ -33,7 +33,7 @@ void Collatz::execute()
     }
 
     this->calculate_runtime();
-    for(size_t i = 0; i <= this->n ; i++)
+    for(size_t i = 0; i < this->n ; i++)
     {
          cout <<i << "," << stopping_times[i] << endl;
     }
@@ -48,25 +48,24 @@ void Collatz::worker(uint16_t i)
     uint64_t cnt = get_counter();
     while( cnt < n )
     {
-        uint32_t stopping_time = 0;
         uint64_t c_copy = increment_counter();
-        increment_counter();
-        while(c_copy != 1 && c_copy != 0)
+        uint32_t stopping_time = 0;
+        while(c_copy != 1 )
         {
             if(c_copy % 2 == 0) // even
             {
-                c_copy = c_copy / 2;
+                c_copy /= 2;
             }
             else //odd
             {
-                c_copy = (3 * c_copy) + 1;
+                c_copy = 3 * c_copy + 1;
             }
             stopping_time++;
-            cnt = get_counter();
         }
 
         // save stopping time
-        this->increment_stopping_time(i);
+        this->increment_stopping_time(stopping_time);
+        cnt = get_counter();
     }
 }
 
