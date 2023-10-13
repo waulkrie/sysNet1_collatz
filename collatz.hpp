@@ -11,13 +11,14 @@ using namespace std;
 class Collatz
 {
     public:
-        Collatz(uint64_t n, uint16_t n_threads);
+        Collatz(uint64_t n, uint16_t n_threads, bool islock);
         ~Collatz();
         void execute();
     private:
         void worker(uint16_t);
         uint64_t n;
         uint16_t n_threads;
+        bool islock = true;
         struct timespec start_time;
         struct timespec end_time;
         string runtime;
@@ -28,8 +29,10 @@ class Collatz
         vector<thread> thread_vector;
         void calculate_runtime();
         string calculate_delta();
-        uint64_t get_counter();
-        void increment_counter();
+        inline uint64_t get_counter();
+//        inline void increment_counter();
+        uint64_t increment_counter();
+        inline void increment_stopping_time(uint32_t i);
         
 };
 
