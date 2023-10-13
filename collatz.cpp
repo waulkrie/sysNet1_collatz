@@ -19,7 +19,7 @@ void Collatz::execute()
     cout << "Starting threads..." << endl;
     for(size_t i = 0; i < this->n_threads; i++)
     {
-        this->thread_vector.push_back(thread(&Collatz::worker, this));
+        this->thread_vector.push_back(thread(&Collatz::worker, this, i));
         cout << "Thread # " << i+1 << " started." << endl;
     }
     cout << "Waiting for threads to finish..." << endl;
@@ -31,12 +31,14 @@ void Collatz::execute()
     this->calculate_runtime();
     for(size_t i = 0; i <= this->n ; i++)
     {
-         cout <<i << ", frequency_of_stopping_time(" << stopping_times[i] << ')' << endl;
+         cerr <<i << ", frequency_of_stopping_time(" << stopping_times[i] << ')' << endl;
     }
+    cerr << this->runtime;
 }
 
-void Collatz::worker()
+void Collatz::worker(uint16_t i)
 {
+
     //collatz algorithm
     uint64_t cnt = get_counter();
     while( cnt < n )
@@ -44,7 +46,7 @@ void Collatz::worker()
         uint32_t stopping_time = 0;
         uint64_t c_copy = get_counter();
         increment_counter();
-        cout << "trying c = " << c_copy << endl;
+//        cout << "trying c = " << c_copy << endl;
         while(c_copy > 1)
         {
         //    cerr << "in inner while loop" << endl;
@@ -66,15 +68,16 @@ void Collatz::worker()
         this->stopping_times[stopping_time]++;
         this->stopping_mtx.unlock();
     }
-    cerr << "Thread finished." << endl;
-    return;
+    cerr << "Thread " << i+1 << " finished." << endl;
 }
 
 void Collatz::calculate_runtime() 
 {
-    this->end_time = clock();
-    auto t = end_time - start_time;
-    cout << "Runtime: " << t << endl;
+    struct timespec *clk;
+//    this->end_time = clock_gettime();
+    auto time = end_time - start_time;
+    this->runtime = to_string(this->n) + "," + to_string(this->n_threads) + "," + to_string(time);
+    cout << "Runtime: " << runtime << endl;
 }
 
 uint64_t Collatz::get_counter()
