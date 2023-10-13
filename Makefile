@@ -4,7 +4,10 @@ PROG_NAME=mt-collatz
 
 objects = main.o collatz.o
 
-collatz: $(objects)
+.PHONY : all
+all: $(PROG_NAME)
+
+mt-collatz: $(objects)
 	$(CC) $(CFLAGS) -o $(PROG_NAME) $(objects)
 
 main.o: main.cpp collatz.hpp
