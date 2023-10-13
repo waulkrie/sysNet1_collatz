@@ -1,14 +1,12 @@
 #ifndef __COLLATZ_HPP__
 #define __COLLATZ_HPP__
 
-#include <iostream>
 #include <mutex>
 #include <thread>
 #include <vector>
 #include <cstdint>
-#include <cmath>
+#include <iostream>
 using namespace std;
-#define time_s struct timespec
 
 class Collatz
 {
@@ -20,8 +18,8 @@ class Collatz
         void worker(uint16_t);
         uint64_t n;
         uint16_t n_threads;
-        time_s start_time;
-        time_s end_time;
+        struct timespec start_time;
+        struct timespec end_time;
         string runtime;
         volatile uint64_t COUNTER = 0;
         mutex mtx;

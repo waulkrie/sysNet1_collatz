@@ -1,7 +1,11 @@
 #include <sstream>
+#include <cmath>
 #include "collatz.hpp"
 
-Collatz::Collatz(uint64_t n = 2000, uint16_t n_threads = 3)
+#define time_s struct timespec
+
+
+Collatz::Collatz(uint64_t n, uint16_t n_threads)
 {
     this->n = n;
     this->n_threads = n_threads;
@@ -17,24 +21,24 @@ Collatz::~Collatz()
 void Collatz::execute()
 {
     clock_gettime( CLOCK_MONOTONIC_RAW , &this->start_time);
-    cout << "Starting threads..." << endl;
+//    cout << "Starting threads..." << endl;
     for(size_t i = 0; i < this->n_threads; i++)
     {
         this->thread_vector.push_back(thread(&Collatz::worker, this, i));
-        cout << "Thread # " << i+1 << " started." << endl;
+//        cout << "Thread # " << i+1 << " started." << endl;
     }
-    cout << "Waiting for threads to finish..." << endl;
+//    cout << "Waiting for threads to finish..." << endl;
     for(thread& thread : this->thread_vector)
     {
         thread.join();
     }
-    cout << this->n_threads << " Threads finished." << endl;
+//    cout << this->n_threads << " Threads finished." << endl;
     this->calculate_runtime();
     for(size_t i = 0; i <= this->n ; i++)
     {
-         cerr <<i << ", frequency_of_stopping_time(" << stopping_times[i] << ')' << endl;
+         cout <<i << "," << stopping_times[i] << endl;
     }
-    cerr << this->runtime;
+    cerr << this->runtime << endl;
 }
 
 void Collatz::worker(uint16_t i)
@@ -69,7 +73,7 @@ void Collatz::worker(uint16_t i)
         this->stopping_times[stopping_time]++;
         this->stopping_mtx.unlock();
     }
-    cerr << "Thread " << i+1 << " finished." << endl;
+//    cerr << "Thread " << i+1 << " finished." << endl;
 }
 string Collatz::calculate_delta()
 {
@@ -95,7 +99,7 @@ void Collatz::calculate_runtime()
     clock_gettime( CLOCK_MONOTONIC_RAW ,&this->end_time);
     string time_str = this->calculate_delta();
     this->runtime = to_string(this->n) + "," + to_string(this->n_threads) + "," + time_str;
-    cout << "Runtime: " << runtime << endl;
+//    cerr << runtime << endl;
 }
 
 uint64_t Collatz::get_counter()
