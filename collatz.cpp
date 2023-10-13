@@ -1,3 +1,4 @@
+#include <sstream>
 #include "collatz.hpp"
 
 Collatz::Collatz(uint64_t n = 2000, uint16_t n_threads = 3)
@@ -15,7 +16,7 @@ Collatz::~Collatz()
 
 void Collatz::execute()
 {
-    this->start_time = clock();
+    clock_gettime( CLOCK_MONOTONIC_RAW , &this->start_time);
     cout << "Starting threads..." << endl;
     for(size_t i = 0; i < this->n_threads; i++)
     {
@@ -70,13 +71,30 @@ void Collatz::worker(uint16_t i)
     }
     cerr << "Thread " << i+1 << " finished." << endl;
 }
+string Collatz::calculate_delta()
+{
+    struct timespec ret = {0};
+    // check nanosecond rollover
+    if(start_time.tv_nsec > end_time.tv_nsec)
+    {
+        ret.tv_nsec = (end_time.tv_nsec + pow<long>(10,9)) - start_time.tv_nsec; // add one second
+        ret.tv_sec = (end_time.tv_sec - 1) - start_time.tv_sec;
+    }
+    else
+    {
+        ret.tv_nsec = end_time.tv_nsec  - start_time.tv_nsec;
+        ret.tv_sec = end_time.tv_sec - start_time.tv_sec;
+    }
+    stringstream ss;
+    ss << ret.tv_sec << "." << ret.tv_nsec;
+    return ss.str();
+}
 
 void Collatz::calculate_runtime() 
 {
-    struct timespec *clk;
-//    this->end_time = clock_gettime();
-    auto time = end_time - start_time;
-    this->runtime = to_string(this->n) + "," + to_string(this->n_threads) + "," + to_string(time);
+    clock_gettime( CLOCK_MONOTONIC_RAW ,&this->end_time);
+    string time_str = this->calculate_delta();
+    this->runtime = to_string(this->n) + "," + to_string(this->n_threads) + "," + time_str;
     cout << "Runtime: " << runtime << endl;
 }
 
