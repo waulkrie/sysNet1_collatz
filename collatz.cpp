@@ -4,7 +4,7 @@ Collatz::Collatz(uint64_t n, int8_t n_threads)
 {
     this->n = n;
     this->n_threads = n_threads;
-    this->stopping_times = new vector<int32_t>[n+1];
+    this->stopping_times = new vector<int32_t>[n+1]; //n+1 so histogram can print out 300, but this might change when we change vector<int>*
 }
 
 Collatz::~Collatz() 
@@ -26,11 +26,11 @@ void Collatz::execute()
     {
         thread.join();
     }
-    cout << this->n_threads << " Threads finished." << endl;
+    cout << this->n_threads << "Threads finished." << endl;
     this->calculate_runtime();
     for(size_t i = 0; i <= this->n ; i++)
     {
-         cout <<i << ", frequency_of_stopping_time(" << stopping_times[i].size() << ')' << endl;
+         cout <<i << ",frequency_of_stopping_time(" << stopping_times[i].size() << ')' << endl;
     }
 }
 
