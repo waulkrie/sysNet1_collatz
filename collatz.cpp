@@ -9,17 +9,10 @@ Collatz::Collatz(uint64_t n, uint16_t n_threads, bool islock)
 {
     this->n = n;
     this->n_threads = n_threads;
-<<<<<<< HEAD
-    this->stopping_times = new vector<int32_t>[n+1]; //n+1 so histogram can print out 300, but this might change when we change vector<int>*
-=======
     this->stopping_times = vector<int32_t>(n+1000, 0);
-<<<<<<< HEAD
-    this->COUNTER = 0;
->>>>>>> 6aa86c65ecc592cacae568f86afb596cc297afb1
-=======
     this->COUNTER = 1;
     this->islock = islock;
->>>>>>> 6855d69bfdfd6b60bbd9e08f652487d53e58b8df
+    this->maxStoppingTime = 0;
 }
 
 Collatz::~Collatz() 
@@ -39,23 +32,11 @@ void Collatz::execute()
     {
         thread.join();
     }
-<<<<<<< HEAD
-    cout << this->n_threads << "Threads finished." << endl;
-=======
 
->>>>>>> 6855d69bfdfd6b60bbd9e08f652487d53e58b8df
     this->calculate_runtime();
-    for(size_t i = 0; i < this->n ; i++)
+    for(size_t i = 0; i <= this->maxStoppingTime ; i++)
     {
-<<<<<<< HEAD
-<<<<<<< HEAD
-         cout <<i << ",frequency_of_stopping_time(" << stopping_times[i].size() << ')' << endl;
-=======
-         cerr <<i << ", frequency_of_stopping_time(" << stopping_times[i] << ')' << endl;
->>>>>>> 6aa86c65ecc592cacae568f86afb596cc297afb1
-=======
          cout <<i << "," << stopping_times[i] << endl;
->>>>>>> 6855d69bfdfd6b60bbd9e08f652487d53e58b8df
     }
 
     cerr << this->runtime << endl;
@@ -82,6 +63,9 @@ void Collatz::worker(uint16_t i)
             }
             stopping_time++;
         }
+        
+        //adjusting size of stopping time array
+
 
         // save stopping time
         this->increment_stopping_time(stopping_time);
@@ -152,9 +136,15 @@ void Collatz::increment_stopping_time(uint32_t i) {
         this->stopping_mtx.lock();
         this->stopping_times[i]++;
         this->stopping_mtx.unlock();
+        if(maxStoppingTime<i){
+            maxStoppingTime = i;
+        }
     }
     else
     {
         this->stopping_times[i]++;
+        if(maxStoppingTime<i){
+            maxStoppingTime = i;
+        }
     }
 }

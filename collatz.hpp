@@ -33,6 +33,7 @@ class Collatz
 //        inline void increment_counter();
         uint64_t increment_counter();
         inline void increment_stopping_time(uint32_t i);
+        long unsigned int maxStoppingTime;
         
 };
 
