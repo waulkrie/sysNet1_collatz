@@ -36,7 +36,7 @@ void Collatz::execute()
     this->calculate_runtime();
     for(size_t i = 0; i <= this->maxStoppingTime ; i++)
     {
-         cout <<i << "," << stopping_times[i] << endl;
+        // cout <<i << "," << stopping_times[i] << endl;
     }
 
     cerr << this->runtime << endl;
