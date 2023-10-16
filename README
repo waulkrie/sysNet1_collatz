@@ -1,2 +1,5 @@
 To compile the program run 'make'  
 To clean compilation objects run 'make clean'  
+
+The biggest hurdle we had in completing this project was not realizing that one worker thread  
+continuously got stuck trying to process 0 at the beginning of the subroutine.
