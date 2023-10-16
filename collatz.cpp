@@ -5,6 +5,9 @@
 #define time_s struct timespec
 
 
+/**
+ * default constructor
+ */
 Collatz::Collatz(uint64_t n, uint16_t n_threads, bool islock)
 {
     this->n = n;
@@ -15,11 +18,17 @@ Collatz::Collatz(uint64_t n, uint16_t n_threads, bool islock)
     this->maxStoppingTime = 0;
 }
 
+/**
+ * destructor - nothing is malloc'd
+ */
 Collatz::~Collatz() 
 {
     // delete[] this->stopping_times;
 }
 
+/**
+ * main running function, starts and joins all the threads and tracks time data
+ */
 void Collatz::execute()
 {
     clock_gettime( CLOCK_MONOTONIC_RAW , &this->start_time);
@@ -33,15 +42,19 @@ void Collatz::execute()
         thread.join();
     }
 
+    // calculate time and print results
     this->calculate_runtime();
     for(size_t i = 0; i <= this->maxStoppingTime ; i++)
     {
-        // cout <<i << "," << stopping_times[i] << endl;
+        cout <<i << "," << stopping_times[i] << endl;
     }
 
     cerr << this->runtime << endl;
 }
 
+/**
+ * The worker thread logic that generates collatz series
+ */
 void Collatz::worker(uint16_t i)
 {
 
@@ -73,6 +86,10 @@ void Collatz::worker(uint16_t i)
     }
 }
 
+/**
+ * Compute how much time we took to run
+ * Check for nanosecond underflow
+ */
 string Collatz::calculate_delta()
 {
     struct timespec ret = {0};
@@ -92,6 +109,9 @@ string Collatz::calculate_delta()
     return ss.str();
 }
 
+/**
+* Store runtime into a string
+*/
 void Collatz::calculate_runtime() 
 {
     clock_gettime( CLOCK_MONOTONIC_RAW ,&this->end_time);
@@ -99,6 +119,7 @@ void Collatz::calculate_runtime()
     this->runtime = to_string(this->n) + "," + to_string(this->n_threads) + "," + time_str;
 }
 
+// Simple mutex protected getter
 uint64_t Collatz::get_counter()
 {
     uint64_t ret = 0;
@@ -114,6 +135,7 @@ uint64_t Collatz::get_counter()
     return ret;
 }
 
+// mutex protected increment
 uint64_t Collatz::increment_counter()
 {
     uint64_t ret = 0;
@@ -130,6 +152,7 @@ uint64_t Collatz::increment_counter()
     return ret;
 }
 
+// mutex protected setter
 void Collatz::increment_stopping_time(uint32_t i) {
     if (this->islock)
     {
